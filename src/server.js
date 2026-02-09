@@ -984,6 +984,10 @@ app.use(async (req, res) => {
   delete req.headers['via'];
   delete req.headers['x-forwarded-by'];
 
+  // Rewrite origin and host to appear local
+  req.headers['origin'] = `http://127.0.0.1:${INTERNAL_GATEWAY_PORT}`;
+  req.headers['host'] = `127.0.0.1:${INTERNAL_GATEWAY_PORT}`;
+
   return proxy.web(req, res, { target: GATEWAY_TARGET });
 });
 
@@ -1020,6 +1024,10 @@ server.on("upgrade", async (req, socket, head) => {
   delete req.headers['forwarded'];
   delete req.headers['via'];
   delete req.headers['x-forwarded-by'];
+
+  // Rewrite origin and host to appear local for WebSockets
+  req.headers['origin'] = `http://127.0.0.1:${INTERNAL_GATEWAY_PORT}`;
+  req.headers['host'] = `127.0.0.1:${INTERNAL_GATEWAY_PORT}`;
 
   proxy.ws(req, socket, head, { target: GATEWAY_TARGET });
 });
