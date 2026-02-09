@@ -974,11 +974,15 @@ app.use(async (req, res) => {
     }
   }
 
-  // Strip X-Forwarded-* headers so gateway sees connection as purely local
+  // Strip ALL proxy-related headers so gateway sees connection as purely local
   delete req.headers['x-forwarded-for'];
   delete req.headers['x-forwarded-host'];
   delete req.headers['x-forwarded-proto'];
   delete req.headers['x-forwarded-port'];
+  delete req.headers['x-real-ip'];
+  delete req.headers['forwarded'];
+  delete req.headers['via'];
+  delete req.headers['x-forwarded-by'];
 
   return proxy.web(req, res, { target: GATEWAY_TARGET });
 });
@@ -1007,11 +1011,15 @@ server.on("upgrade", async (req, socket, head) => {
     return;
   }
 
-  // Strip X-Forwarded-* headers for WebSocket connections too
+  // Strip ALL proxy-related headers for WebSocket connections too
   delete req.headers['x-forwarded-for'];
   delete req.headers['x-forwarded-host'];
   delete req.headers['x-forwarded-proto'];
   delete req.headers['x-forwarded-port'];
+  delete req.headers['x-real-ip'];
+  delete req.headers['forwarded'];
+  delete req.headers['via'];
+  delete req.headers['x-forwarded-by'];
 
   proxy.ws(req, socket, head, { target: GATEWAY_TARGET });
 });
