@@ -551,8 +551,10 @@ app.post("/setup/api/run", requireSetupAuth, async (req, res) => {
   if (ok) {
     // Ensure gateway token is written into config so the browser UI can authenticate reliably.
     // (We also enforce loopback bind since the wrapper proxies externally.)
+    // Set both gateway.auth.token (server-side) and gateway.remote.token (client-side) to prevent token mismatch.
     await runCmd(OPENCLAW_NODE, clawArgs(["config", "set", "gateway.auth.mode", "token"]));
     await runCmd(OPENCLAW_NODE, clawArgs(["config", "set", "gateway.auth.token", OPENCLAW_GATEWAY_TOKEN]));
+    await runCmd(OPENCLAW_NODE, clawArgs(["config", "set", "gateway.remote.token", OPENCLAW_GATEWAY_TOKEN]));
     await runCmd(OPENCLAW_NODE, clawArgs(["config", "set", "gateway.bind", "loopback"]));
     await runCmd(OPENCLAW_NODE, clawArgs(["config", "set", "gateway.port", String(INTERNAL_GATEWAY_PORT)]));
 
