@@ -953,7 +953,7 @@ app.post("/setup/import", requireSetupAuth, async (req, res) => {
 const proxy = httpProxy.createProxyServer({
   target: GATEWAY_TARGET,
   ws: true,
-  xfwd: true,
+  xfwd: false,  // Don't forward proxy headers - gateway should only see local wrapper connection
 });
 
 proxy.on("error", (err, _req, _res) => {
